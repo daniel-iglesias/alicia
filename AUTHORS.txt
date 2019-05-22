@@ -1,0 +1,3 @@
+The following authors have contributed to the project:
+
+Daniel Iglesias <d.iglesias.fusion@gmail.com>

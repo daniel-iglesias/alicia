@@ -1,0 +1,4 @@
+Citing this project in publications:
+
+D. Iglesias et al, “Digital twin applications for the JET divertor”, Fusion Engineering & Design 125:71-
+76, 2017. https://doi.org/10.1016/j.fusengdes.2017.10.012
