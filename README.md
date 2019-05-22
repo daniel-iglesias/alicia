@@ -45,7 +45,9 @@ cd <build directory>/ALICIA-examples/90271-TPT6-augmented-5deg-alpha1E3-res1E1/
 
 ## License
 
-Copyright (C) 2016 by Daniel Iglesias
+Copyright (C) 2007-2017 by Daniel Iglesias
+
+Copyright (c) 2013-2018, European Atomic Energy Community (EURATOM)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
