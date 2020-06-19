@@ -15,12 +15,15 @@ ${MKNIX_SOURCE_DIR}/src/
 ${MKNIX_SOURCE_DIR}/LMX-1.0/src/
 )
 
+link_directories ( ${PROJECT_BINARY_DIR} /jet/share/lib )
+
 add_executable (alicia ALICIA.cpp)
 
-link_directories ( ${PROJECT_BINARY_DIR})
-
+target_link_libraries( alicia ppf
+)
 target_link_libraries ( alicia debug
  ${MKNIX_LINK_DIR}/../../MkniX-debug/src/libmknix.so 
+
 )
 target_link_libraries ( alicia optimized
  ${MKNIX_LINK_DIR}/libmknix.so
