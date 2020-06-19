@@ -19,7 +19,7 @@ link_directories ( ${PROJECT_BINARY_DIR} /jet/share/lib )
 
 add_executable (alicia ALICIA.cpp)
 
-target_link_libraries( alicia ppf
+target_link_libraries( alicia
 )
 target_link_libraries ( alicia debug
  ${MKNIX_LINK_DIR}/../../MkniX-debug/src/libmknix.so 

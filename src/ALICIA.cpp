@@ -35,10 +35,6 @@
 #include "json/json-forwards.h"
 #include "jsoncpp.cpp"
 
-extern "C"{
-    #include "ppf.h"
-}
-
 #include "simulation.h"
 #include "node.h"
 #include "common.h"
@@ -46,182 +42,6 @@ extern "C"{
 using namespace std;
 using namespace mknix;
 
-int writePPF(int shot){
-    /* PPF Docs
-    https://users.euro-fusion.org/pages/data-ppf-jpf/ppfuserguide/quickstart.shtml
-    */    
-
-    // As we don't know what form we should save the data in, I'm going to just save an arbitrary DataType.
-    cout << '\n' << "Saving arbitrary shot " << shot << " data." << '\n';
-    
-    /* Read
-    int NTMAX = 1024;
-    int NXMAX = 1;
-    int NDMAX = NTMAX * NXMAX;
-    
-    int ISHOT = 0;
-    int ISEQ = 0;
-    int ILUN = 0;
-    int IERR = 0;
-    
-    int IRDAT[13];
-    int IWDAT[13];
-    int INDAT[10];
-    
-    float DATA[NDMAX];
-    float X[NXMAX];
-    float T[NTMAX];
-    
-    char DDA[5];
-    char DTYPE[5];
-    char IHDAT[60];
-    
-    // Initialise the PPF system.
-    PPFGO(&ISHOT, &ISEQ, &ILUN, &IERR);
-    if (IERR != 0){
-        cout << "PPFGO error: " << IERR << '\n';
-        return EXIT_FAILURE;
-	}
-	
-    // Set up the PPF system to read to a public record.
-	PPFUID("JETPPF\0", "R\0", 8, 1);
-	
-	// Specify the shot we want to read.
-	ISHOT = shot;
-	PPFGO(&ISHOT, &ISEQ, &ILUN, &IERR);
-    if (IERR != 0){
-        cout << "PPFGO error: " << IERR << '\n';
-        return EXIT_FAILURE;
-	}
-	
-	strcpy(DDA, "MAGN\0");
-    strcpy(DTYPE, "IPLA\0");
-       
-    // First and last X point requested.
-    IRDAT[0] = 1;
-    IRDAT[1] = NXMAX;
-
-    // First and last T point requested.
-    IRDAT[2] = 1;
-    IRDAT[3] = NTMAX;
-
-    // Dimensions of DATA X, and T arrays.
-    IRDAT[4] = NDMAX;
-    IRDAT[5] = NXMAX;
-    IRDAT[6] = NTMAX;
-       
-    // Set flags to return x- and t-vectors.
-    IRDAT[7] = 1;
-    IRDAT[8] = 1;
-	
-	// Grab the data.
-    PPFGET(&ISHOT, DDA, DTYPE, IRDAT, IHDAT, IWDAT, DATA, X, T, &IERR, 5, 5, 60);
-    if (IERR != 0){
-	    cout << "PPFGET error: " << IERR << '\n';
-        return EXIT_FAILURE;
-	}
-	
-    // Output whatever we desire!
-    for (int i = 0; i < 13; i++){
-	    cout << i << " " << IRDAT[i] << '\n';
-    }
-	//*/
-	
-    //* Write
-    int ISHOT = 0;
-    int ISEQ = 0;
-    int ILUN = 0;
-    int IERR = 0;
-    
-    int ITIME = 0;
-    int IDATE = 0;
-    
-    int IRDAT[13];
-    int IWDAT[13];
-    int INDAT[10];
-    
-    float DATA[1];
-    
-    char DDA[5];
-    char DTYPE[5];
-    char IHDAT[60];
-
-    // PPF header comment. Empty, but required.
-    char ICOM[25];
-    
-    // Initialise the PPF system.
-    PPFGO(&ISHOT, &ISEQ, &ILUN, &IERR);
-    if (IERR != 0){
-        cout << '\n' << "PPFGO error: " << IERR << '\n';
-        return EXIT_FAILURE;
-    }
-	
-    // Set up the PPF system to write to a private record.
-    PPFUID("tclayton\0", "W\0", 9, 1);
-    
-    // Specify the shot we want to write.
-    ISHOT = shot;
-	PPFGO(&ISHOT, &ISEQ, &ILUN, &IERR);
-    if (IERR != 0){
-        cout << '\n' << "PPFGO error: " << IERR << '\n';
-        return EXIT_FAILURE;
-	}
-	
-	// Create temporary PPF file.
-	INDAT[0] = shot;
-	INDAT[1] = 123000;  // 12:30:00
-	INDAT[2] = 311018;  // 2018/10/31
-	INDAT[3] = 0;
-	INDAT[9] = 0;
-	PPFOPN(&ISHOT, 0, 0, 0, INDAT, ICOM, &IERR, 24);
-    if (IERR != 0){
-        cout << '\n' << "PPFOPN error: " << IERR << '\n';
-	    PPFABO(&IERR);
-	    return EXIT_FAILURE;
-    }
-    
-    // Write test data to the temporary PPF file.
-    // Document this better when we know what we're actually supposed to be writing.
-    IRDAT[5] = 1;
-    IRDAT[6] = 1;
-    IRDAT[7] = 0;
-	IRDAT[8] = 0;
-	IRDAT[9] = 0;
-	IRDAT[10] = 0;
-	IRDAT[11] = 0;
-	IRDAT[12] = 0;
-	
-	char *padding = "     ";
-	char *floatPadded = "F   ";
-	strcpy(&IHDAT[0], "Tlsa");
-	strcpy(&IHDAT[4], padding);
-	strcpy(&IHDAT[8], padding);
-	strcpy(&IHDAT[12], padding);
-	strcpy(&IHDAT[16], padding);
-	strcpy(&IHDAT[20], padding);
-	strcpy(&IHDAT[24], floatPadded);
-	strcpy(&IHDAT[28], padding);
-	strcpy(&IHDAT[32], floatPadded);
-	strcpy(&IHDAT[36], "                        ");
-	
-	DATA[0] = 3.141592654;
-	
-    strcpy(DDA, "TEST\0");
-    strcpy(DTYPE, "Tlsa\0");
-    PPFWRI(&ISHOT, DDA, DTYPE, IRDAT, IHDAT, IWDAT, DATA, NULL, NULL, &IERR, 5, 5, 60);
-    
-    if (IERR != 0){
-        cout << '\n' << "PPFWRI error: " << IERR << '\n';
-	    PPFABO(&IERR);
-	    return EXIT_FAILURE;
-    }
-    
-    // Scrap the temporary PPF file. To save, replace with PPFCLO.
-    PPFABO(&IERR);
-    //*/
-    
-    return EXIT_SUCCESS;
-}
 
 int main(int argc, char *argv[])
 {
@@ -509,12 +329,12 @@ int main(int argc, char *argv[])
         writer.write(ofs, obj);
         
         if (dryRuns < 0 && shot > 0){
-            int savingFailed = writePPF(shot);
-            if (savingFailed)
-                cout << '\n' << "Saving failed." << '\n';
-            else
-                cout << '\n' << "Saving success." << '\n';
-            return savingFailed;   
+//             int savingFailed = writePPF(shot);
+//             if (savingFailed)
+//                 cout << '\n' << "Saving failed." << '\n';
+//             else
+//                 cout << '\n' << "Saving success." << '\n';
+//             return savingFailed;   
         }
 
 
